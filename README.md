@@ -6,7 +6,7 @@ The simplest possible P2P cli chat made with TCP sockets in C99 with no external
 >
 > This is a practice project (at least for now), not intended for actual use.
 >
-> This shit is insecure and unstable *as fuck* so be aware.
+> This shit is insecure and unstable *as fuck*, so be aware.
 
 ## Getting Started
 
@@ -67,3 +67,5 @@ What is being requested? 3 byte flag which can be thought of as it's ASCII repre
 ## Contributing
 
 Any contributions are highly appreciated, although this is meant to be my personal study on sockets.
+
+When contributing please create your own branch (or a fork) named `dev/{username}` or `feature/{feature name}` (you get the idea) and pull request.
