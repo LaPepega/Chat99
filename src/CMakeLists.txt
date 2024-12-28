@@ -1,4 +1,4 @@
-include_directories(include)
+include_directories(../include)
 
 add_library(client SHARED client.c)
 add_library(server SHARED server.c)
