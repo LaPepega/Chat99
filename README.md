@@ -10,10 +10,6 @@ The simplest possible P2P cli chat made with TCP sockets in C99 with no external
 >
 > This shit is insecure and unstable *as fuck*, so be aware.
 
-## Does it work yet?
-
-***No***
-
 ## Getting Started
 
 `TODO` :)
