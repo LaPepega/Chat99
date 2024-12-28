@@ -12,7 +12,7 @@ int server_init_socket(uint16_t port)
     if (sock < 0)
     {
         perror("Failed to create socket");
-        exit(-1);
+        exit(-3);
     }
 
     struct sockaddr_in addr = {
@@ -25,7 +25,7 @@ int server_init_socket(uint16_t port)
     if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
     {
         perror("Failed to bind socket");
-        exit(-2);
+        exit(-3);
     }
 
     if (listen(sock, 20) < 0)
