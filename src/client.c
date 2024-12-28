@@ -8,7 +8,7 @@
 int client_init_socket(uint16_t port)
 {
     // 0 -> Internet Protocol
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock < 0)
     {
         perror("Failed to create socket");

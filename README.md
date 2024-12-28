@@ -3,7 +3,7 @@
 
 # Chat99
 
-The simplest possible P2P cli chat made with TCP sockets in C99 with no external libraries.
+The simplest possible P2P cli chat made with UDP sockets in C99 with no external libraries.
 
 > **Warning!**
 >
@@ -48,7 +48,7 @@ The client and server code is compiled into shared libraries, which are then use
 
 ## Requests
 
-Well more like connections but I don't care. All data transferred over TCP connections is formatted to be as easy to parse as possible so any messages, usernames, etc. can only contain ASCII characters.
+Well more like packets but I don't care. All data transferred over UDP is formatted to be as easy to parse as possible so any messages, usernames, etc. can only contain ASCII characters.
 
 **Any non-ASCII messages are undefined behavior because I said so, fuck you.**
 
