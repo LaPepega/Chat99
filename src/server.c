@@ -12,7 +12,7 @@ int server_init_socket(uint16_t port)
     if (sock < 0)
     {
         perror("Failed to create socket");
-        exit(1);
+        return -1;
     }
 
     struct sockaddr_in addr = {
@@ -25,13 +25,13 @@ int server_init_socket(uint16_t port)
     if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
     {
         perror("Failed to bind socket");
-        exit(1);
+        return -1;
     }
 
     if (listen(sock, 20) < 0)
     {
         perror("Failed to make socket passive");
-        exit(1);
+        return -1;
     }
 
     return sock;

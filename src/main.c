@@ -25,9 +25,19 @@ int main(int argc, char const *argv[])
 
     printf("Initializing server...\n");
     int server_socket = server_init_socket(SERVER_PORT);
+    if (server_socket < 0)
+    {
+        perror("Couldn't initialize server");
+        exit(1);
+    }
 
     printf("Initializing client...\n");
     int client_socket = client_init_socket(CLIENT_PORT);
+    if (client_socket < 0)
+    {
+        perror("Couldn't initialize client");
+        exit(1);
+    }
 
     return 0;
 }
