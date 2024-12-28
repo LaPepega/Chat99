@@ -1,3 +1,5 @@
+![Does it work yet? Nope](https://img.shields.io/badge/Does_it_work_yet%3F-NO-red)
+
 # Chat99
 
 The simplest possible P2P cli chat made with TCP sockets in C99 with no external libraries.
