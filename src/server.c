@@ -2,8 +2,12 @@
 #include <netinet/in.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "server.h"
+#include "request_data.h"
+
+#define SIGNATURE "C99REQ"
 
 int server_init_socket(uint16_t port)
 {
@@ -11,22 +15,67 @@ int server_init_socket(uint16_t port)
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock < 0)
     {
-        perror("Failed to create socket");
+        // Failed to create socket
         return -1;
     }
 
-    struct sockaddr_in addr = {
+    struct sockaddr_in server_addr = {
         .sin_family = AF_INET,
         .sin_addr = htonl(INADDR_ANY),
         .sin_port = htons(port)
 
     };
 
-    if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+    if (bind(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
     {
-        perror("Failed to bind socket");
+        // Failed to bind socket
         return -1;
     }
 
     return sock;
+}
+
+request_data server_receive(int sock)
+{
+    char header[13];
+    struct sockaddr_in client_addr;
+    uint32_t client_addr_size = sizeof(client_addr);
+
+    request_data req;
+
+    recvfrom(sock, &header, 13, 0, (struct sockaddr *)&client_addr, &client_addr_size);
+
+    char signature[7];
+    strncpy(signature, header, 6);
+    signature[6] = '\0';
+
+    if (strcmp(signature, SIGNATURE) != 0)
+    {
+        // Invalid signature;
+        req.payload_size = -1;
+        return req;
+    }
+
+    // The easiest way to get a string slice here :/
+    char req_type[4] = {header[6], header[7], header[8], '\0'};
+
+    if (strcmp(req_type, "ADD") == 0)
+    {
+        req.type = REQ_ADD;
+    }
+    else if (strcmp(req_type, "MSG") == 0)
+    {
+        req.type = REQ_MSG;
+    }
+
+    // Reading payload size stored in 4 bytes to int32_t
+    // Oh boy, I sure hope this won't cause any endianness issues!
+    char payload_size_b[4] = {header[12], header[11], header[10], header[9]};
+    uint32_t payload_size = *(uint32_t *)payload_size_b;
+
+    req.payload_size = payload_size;
+
+    // TODO: read the payload
+
+    return req;
 }

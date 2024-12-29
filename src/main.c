@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <arpa/inet.h>
+#include <pthread.h>
 
 #include "server.h"
 #include "client.h"
@@ -15,8 +16,9 @@ int main(int argc, char const *argv[])
         perror("No address specified");
         exit(1);
     }
-    struct in_addr con_addr;
 
+    // Address to connect to, a temporary measure
+    struct in_addr con_addr;
     if (inet_pton(AF_INET, argv[1], &con_addr) < 1)
     {
         perror("Invalid address");
@@ -25,19 +27,10 @@ int main(int argc, char const *argv[])
 
     printf("Initializing server...\n");
     int server_socket = server_init_socket(SERVER_PORT);
-    if (server_socket < 0)
-    {
-        perror("Couldn't initialize server");
-        exit(1);
-    }
 
-    printf("Initializing client...\n");
-    int client_socket = client_init_socket(CLIENT_PORT);
-    if (client_socket < 0)
-    {
-        perror("Couldn't initialize client");
-        exit(1);
-    }
+    char req_s[24];
+    request_data req = {.payload_size = 10, .payload = "HAHAHAHAHA", .type = REQ_MSG};
+    client_build_request(req, req_s);
 
     return 0;
 }
