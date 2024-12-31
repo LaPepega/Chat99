@@ -15,7 +15,7 @@ int main(int argc, char const *argv[])
     if (argc > 1 && strcmp(argv[1], "-c") == 0)
     {
         request_header hdr = {.payload_size = 5, .type = REQ_MSG};
-        char req[19];
+        char req[14];
         client_build_header_request(hdr, req);
         struct sockaddr_in server_addr = {
             .sin_family = AF_INET,
@@ -41,15 +41,21 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
 
+    char resp[9];
+
     struct sockaddr_in client_addr;
-    request_header test_req = {.payload_size = 0, .type = REQ_ADD};
+    request_header test_req;
     if (server_receive_header(server_socket, &test_req, &client_addr) < 0)
     {
         perror("Invalid request received");
+
+        server_build_response(RES_ERR, resp);
+        server_respond(server_socket, client_addr, resp);
         exit(EXIT_FAILURE);
     }
-    printf("%d", test_req.payload_size);
-
+    printf("Received a header response, payload size is %d", test_req.payload_size);
+    server_build_response(RES_SUC, resp);
+    server_respond(server_socket, client_addr, resp);
     /*
         char *pld = malloc(sizeof(char) * test_req.payload_size);
         free(pld);

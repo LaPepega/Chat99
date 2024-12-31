@@ -95,3 +95,37 @@ int server_receive_payload(
     }
     return 0;
 }
+
+int server_build_response(response_type t, char *res_ret)
+{
+    strcpy(res_ret, SIGNATURE_RESPONSE);
+
+    switch (t)
+    {
+    case RES_ERR:
+        res_ret[6] = 'E';
+        res_ret[7] = 'R';
+        res_ret[8] = 'R';
+        break;
+
+    case RES_SUC:
+        res_ret[6] = 'S';
+        res_ret[7] = 'U';
+        res_ret[8] = 'C';
+        break;
+
+    default:
+        // Invalid response type
+        return -1;
+        break;
+    }
+}
+
+int server_respond(
+    int sock,
+    struct sockaddr_in client_addr,
+    char *response)
+{
+    uint32_t addr_size = sizeof(client_addr);
+    sendto(sock, response, 9, 0, (struct sockaddr *)&client_addr, addr_size);
+}
