@@ -14,7 +14,7 @@ int main(int argc, char const *argv[])
     if (argc < 2)
     {
         perror("No address specified");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     // Address to connect to, a temporary measure
@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
     if (inet_pton(AF_INET, argv[1], &con_addr) < 1)
     {
         perror("Invalid address");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     printf("Initializing server...\n");
