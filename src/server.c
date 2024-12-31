@@ -35,14 +35,14 @@ int server_init_socket(uint16_t port)
     return sock;
 }
 
-request_data server_receive(int sock)
+int server_receive(int sock, request_data *req_ret)
 {
     char header[13];
     struct sockaddr_in client_addr;
     uint32_t client_addr_size = sizeof(client_addr);
 
-    request_data req;
-
+    // FIXME: Only receives the header rn. What happens to the payload?
+    // Does it just get cut off or can i receive the rest with one more call?
     recvfrom(sock, &header, 13, 0, (struct sockaddr *)&client_addr, &client_addr_size);
 
     char signature[7];
@@ -52,8 +52,7 @@ request_data server_receive(int sock)
     if (strcmp(signature, SIGNATURE) != 0)
     {
         // Invalid signature;
-        req.payload_size = -1;
-        return req;
+        return -1;
     }
 
     // The easiest way to get a string slice here :/
@@ -61,11 +60,16 @@ request_data server_receive(int sock)
 
     if (strcmp(req_type, "ADD") == 0)
     {
-        req.type = REQ_ADD;
+        req_ret->type = REQ_ADD;
     }
     else if (strcmp(req_type, "MSG") == 0)
     {
-        req.type = REQ_MSG;
+        req_ret->type = REQ_MSG;
+    }
+    else
+    {
+        // Invalid type
+        return -1;
     }
 
     // Reading payload size stored in 4 bytes to int32_t
@@ -73,9 +77,9 @@ request_data server_receive(int sock)
     char payload_size_b[4] = {header[12], header[11], header[10], header[9]};
     uint32_t payload_size = *(uint32_t *)payload_size_b;
 
-    req.payload_size = payload_size;
+    req_ret->payload_size = payload_size;
 
     // TODO: read the payload
 
-    return req;
+    return 0;
 }
