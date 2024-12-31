@@ -36,7 +36,7 @@ int client_init_socket(uint16_t port)
 int client_build_header_request(request_header header, char *req_ret)
 {
     // Signature
-    strcpy(req_ret, "C99REQ");
+    strcpy(req_ret, SIGNATURE_REQUEST);
 
     // I can't be bothered to do this better :/
     switch (header.type)
