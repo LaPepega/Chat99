@@ -1,5 +1,5 @@
 #pragma once
-#include "request_data.h"
+#include "communications.h"
 
 /**
  * @brief Creates and binds a new passive socket for comunicating with clients

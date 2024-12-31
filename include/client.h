@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-#include "request_data.h"
+#include "communications.h"
 
 /**
  * @brief Creates and binds a new active socket for

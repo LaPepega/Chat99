@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "client.h"
-#include "request_data.h"
+#include "communications.h"
 
 int client_init_socket(uint16_t port)
 {
