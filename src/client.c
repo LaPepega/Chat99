@@ -33,13 +33,13 @@ int client_init_socket(uint16_t port)
     return sock;
 }
 
-int client_build_request(request_data data, char *req_ret)
+int client_build_header_request(request_header header, char *req_ret)
 {
     // Signature
     strcpy(req_ret, "C99REQ");
 
     // I can't be bothered to do this better :/
-    switch (data.type)
+    switch (header.type)
     {
     case REQ_ADD:
         req_ret[6] = 'A';
@@ -59,16 +59,25 @@ int client_build_request(request_data data, char *req_ret)
     }
 
     // Convert payload size to 4 separate bytes
-    req_ret[9] = (data.payload_size >> 24) & 0xFF;
-    req_ret[10] = (data.payload_size >> 16) & 0xFF;
-    req_ret[11] = (data.payload_size >> 8) & 0xFF;
-    req_ret[12] = data.payload_size & 0xFF;
+    req_ret[9] = (header.payload_size >> 24) & 0xFF;
+    req_ret[10] = (header.payload_size >> 16) & 0xFF;
+    req_ret[11] = (header.payload_size >> 8) & 0xFF;
+    req_ret[12] = header.payload_size & 0xFF;
 
-    for (size_t i = 0; i < data.payload_size; i++)
+    req_ret[13] = '\0';
+
+    return 0;
+}
+
+int client_send_header_request(
+    int sock,
+    struct sockaddr_in server_addr,
+    char *header_req)
+{
+    uint32_t addr_size = sizeof(server_addr);
+    if (sendto(sock, header_req, 13, 0, (struct sockaddr *)&server_addr, addr_size) < 0)
     {
-        req_ret[i + 12] = data.payload[i];
+        return -1;
     }
-    req_ret[data.payload_size + 13] = '\0';
-
     return 0;
 }

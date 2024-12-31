@@ -7,8 +7,6 @@
 #include "server.h"
 #include "request_data.h"
 
-#define SIGNATURE "C99REQ"
-
 int server_init_socket(uint16_t port)
 {
     // 0 -> Internet Protocol
@@ -35,21 +33,21 @@ int server_init_socket(uint16_t port)
     return sock;
 }
 
-int server_receive(int sock, request_data *req_ret)
+int server_receive_header(
+    int sock,
+    request_header *req_ret,
+    struct sockaddr_in *client_addr_ret)
 {
     char header[13];
-    struct sockaddr_in client_addr;
-    uint32_t client_addr_size = sizeof(client_addr);
+    uint32_t client_addr_size = sizeof(*client_addr_ret);
 
-    // FIXME: Only receives the header rn. What happens to the payload?
-    // Does it just get cut off or can i receive the rest with one more call?
-    recvfrom(sock, &header, 13, 0, (struct sockaddr *)&client_addr, &client_addr_size);
+    recvfrom(sock, &header, 13, 0, (struct sockaddr *)client_addr_ret, &client_addr_size);
 
     char signature[7];
     strncpy(signature, header, 6);
     signature[6] = '\0';
 
-    if (strcmp(signature, SIGNATURE) != 0)
+    if (strcmp(signature, SIGNATURE_REQUEST) != 0)
     {
         // Invalid signature;
         return -1;
@@ -79,7 +77,21 @@ int server_receive(int sock, request_data *req_ret)
 
     req_ret->payload_size = payload_size;
 
-    // TODO: read the payload
+    return 0;
+}
 
+int server_receive_payload(
+    int sock,
+    struct sockaddr_in expected_addr,
+    size_t payload_size,
+    char *payload_ret)
+{
+    struct sockaddr_in received_addr;
+    uint32_t addr_size = sizeof(received_addr);
+    recvfrom(sock, payload_ret, payload_size, 0, (struct sockaddr *)&received_addr, &addr_size);
+    if (received_addr.sin_family != expected_addr.sin_family || received_addr.sin_addr.s_addr != expected_addr.sin_addr.s_addr)
+    {
+        return -1;
+    }
     return 0;
 }
