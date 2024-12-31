@@ -17,7 +17,7 @@ int client_init_socket(uint16_t port);
  *
  * @param req_data data to build a request from
  * @param req_ret the request will be written here.
- * Must be `14 + payload_size` bytes long
+ * Must be `14` bytes long
  * @return int 0 for Success, -1 for errors
  */
 int client_build_header_request(request_header req_data, char *req_ret);
