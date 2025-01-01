@@ -83,6 +83,7 @@ int client_send_header_request(
 
     if (sendto(sock, header_req, LEN_HEADER, 0, (struct sockaddr *)&server_addr, addr_size) < 0)
     {
+        // Failed to send header request
         return -1;
     }
     return 0;

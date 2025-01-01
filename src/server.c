@@ -126,7 +126,7 @@ int server_build_response(response_type t, char *res_ret)
         break;
 
     default:
-        // Invalid response type
+        // Invalid response code
         return -1;
         break;
     }
