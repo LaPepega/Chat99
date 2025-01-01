@@ -1,5 +1,6 @@
 ![Does it work yet? Nope](https://img.shields.io/badge/Does_it_work_yet%3F-NO-red)
 ![Build Status](https://img.shields.io/github/actions/workflow/status/LaPepega/Chat99/build-linux.yml)
+![Lines of code](https://tokei.rs/b1/github/LaPepega/Chat99)
 
 # Chat99
 
