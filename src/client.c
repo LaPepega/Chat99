@@ -64,8 +64,6 @@ int client_build_header_request(request_header header, char *req_ret)
     req_ret[11] = (header.payload_size >> 8) & 0xFF;
     req_ret[12] = header.payload_size & 0xFF;
 
-    req_ret[13] = '\0';
-
     return 0;
 }
 
