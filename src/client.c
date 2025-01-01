@@ -42,15 +42,15 @@ int client_build_header_request(request_header header, char *req_ret)
     switch (header.type)
     {
     case REQ_ADD:
-        req_ret[6] = 'A';
-        req_ret[7] = 'D';
-        req_ret[8] = 'D';
+        req_ret[LEN_SIGNATURE + 0] = 'A';
+        req_ret[LEN_SIGNATURE + 1] = 'D';
+        req_ret[LEN_SIGNATURE + 2] = 'D';
         break;
 
     case REQ_MSG:
-        req_ret[6] = 'M';
-        req_ret[7] = 'S';
-        req_ret[8] = 'G';
+        req_ret[LEN_SIGNATURE + 0] = 'M';
+        req_ret[LEN_SIGNATURE + 1] = 'S';
+        req_ret[LEN_SIGNATURE + 2] = 'G';
         break;
     default:
         // Invalid request type
@@ -59,10 +59,10 @@ int client_build_header_request(request_header header, char *req_ret)
     }
 
     // Convert payload size to 4 separate bytes
-    req_ret[9] = (header.payload_size >> 24) & 0xFF;
-    req_ret[10] = (header.payload_size >> 16) & 0xFF;
-    req_ret[11] = (header.payload_size >> 8) & 0xFF;
-    req_ret[12] = header.payload_size & 0xFF;
+    req_ret[LEN_SIGNATURE + 3] = (header.payload_size >> 24) & 0xFF;
+    req_ret[LEN_SIGNATURE + 4] = (header.payload_size >> 16) & 0xFF;
+    req_ret[LEN_SIGNATURE + 5] = (header.payload_size >> 8) & 0xFF;
+    req_ret[LEN_SIGNATURE + 6] = header.payload_size & 0xFF;
 
     return 0;
 }
@@ -107,10 +107,10 @@ int client_receive_response(int sock, struct sockaddr_in expected_addr)
         return -1;
     }
 
-    char signature[6];
-    strncat(signature, resp, 6);
+    char signature[LEN_SIGNATURE];
+    strncat(signature, resp, LEN_SIGNATURE);
 
-    char rettype_s[3] = {resp[6], resp[7], resp[8]};
+    char rettype_s[3] = {resp[LEN_SIGNATURE], resp[LEN_SIGNATURE + 1], resp[LEN_SIGNATURE + 2]};
     if (strcmp(rettype_s, RES_ERR_S) == 0)
     {
         return RES_ERR;
@@ -133,15 +133,15 @@ int client_send_payload(
     char *payload)
 {
     uint32_t addr_size = sizeof(server_addr);
-    char signed_payload[payload_size + 6];
-    strncpy(signed_payload, SIGNATURE_PAYLOAD, 6);
+    char signed_payload[payload_size + LEN_SIGNATURE];
+    strncpy(signed_payload, SIGNATURE_PAYLOAD, LEN_SIGNATURE);
 
     for (size_t i = 0; i < payload_size; i++)
     {
-        signed_payload[i + 6] = payload[i];
+        signed_payload[i + LEN_SIGNATURE] = payload[i];
     }
 
-    if (sendto(sock, signed_payload, payload_size + 6, 0, (struct sockaddr *)&server_addr, addr_size) < 0)
+    if (sendto(sock, signed_payload, payload_size + LEN_SIGNATURE, 0, (struct sockaddr *)&server_addr, addr_size) < 0)
     {
         // Sending error
         return -1;

@@ -15,7 +15,7 @@ that i already have the payload size when i recvfrom()
 */
 
 /** All UDP messages Chat99 sends start with
- * one of the following 6 byte signatures*/
+ * one of the following signatures*/
 
 /** Client->Server request header */
 #define SIGNATURE_REQUEST "C99REQ"
@@ -24,12 +24,14 @@ that i already have the payload size when i recvfrom()
 /** Server->Client response*/
 #define SIGNATURE_RESPONSE "C99RES"
 
+/** All signatures must be of this length */
+#define LEN_SIGNATURE 6
 /** Predefined length of all server response messages.
- * 6 byte signature + 3 byte response code */
-#define LEN_RESPONSE 9
+ * signature + 3 byte response code */
+#define LEN_RESPONSE LEN_SIGNATURE + 3
 /** Predefined length of all client header request messages.
- * 6 byte signature + 3 byte request type + 4 byte payload length */
-#define LEN_HEADER 13
+ * signature + 3 byte request type + 4 byte payload length */
+#define LEN_HEADER LEN_SIGNATURE + 7
 
 /**
  * @brief Types of requests the server can receive

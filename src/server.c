@@ -47,9 +47,9 @@ int server_receive_header(
         return -1;
     }
 
-    char signature[7];
-    strncpy(signature, header, 6);
-    signature[6] = '\0';
+    char signature[LEN_SIGNATURE + 1];
+    strncpy(signature, header, LEN_SIGNATURE);
+    signature[LEN_SIGNATURE] = '\0';
 
     if (strcmp(signature, SIGNATURE_REQUEST) != 0)
     {
@@ -58,7 +58,7 @@ int server_receive_header(
     }
 
     // The easiest way to get a string slice here :/
-    char req_type[4] = {header[6], header[7], header[8], '\0'};
+    char req_type[4] = {header[LEN_SIGNATURE], header[LEN_SIGNATURE + 1], header[LEN_SIGNATURE + 2], '\0'};
 
     if (strcmp(req_type, REQ_ADD_S) == 0)
     {
@@ -76,7 +76,7 @@ int server_receive_header(
 
     // Reading payload size stored in 4 bytes to int32_t
     // Oh boy, I sure hope this won't cause any endianness issues!
-    char payload_size_b[4] = {header[12], header[11], header[10], header[9]};
+    char payload_size_b[4] = {header[LEN_SIGNATURE + 6], header[LEN_SIGNATURE + 5], header[LEN_SIGNATURE + 4], header[LEN_SIGNATURE + 3]};
     uint32_t payload_size = *(uint32_t *)payload_size_b;
 
     req_ret->payload_size = payload_size;
@@ -94,7 +94,7 @@ int server_receive_payload(
     uint32_t addr_size = sizeof(received_addr);
 
     // +6 bytes for signature
-    if (recvfrom(sock, payload_ret, payload_size + 6, 0, (struct sockaddr *)&received_addr, &addr_size) < 0)
+    if (recvfrom(sock, payload_ret, payload_size + LEN_SIGNATURE, 0, (struct sockaddr *)&received_addr, &addr_size) < 0)
     {
         // receiving error
         return -1;
@@ -115,15 +115,15 @@ int server_build_response(response_code t, char *res_ret)
     switch (t)
     {
     case RES_ERR:
-        res_ret[6] = 'E';
-        res_ret[7] = 'R';
-        res_ret[8] = 'R';
+        res_ret[LEN_SIGNATURE] = 'E';
+        res_ret[LEN_SIGNATURE + 1] = 'R';
+        res_ret[LEN_SIGNATURE + 2] = 'R';
         break;
 
     case RES_SUC:
-        res_ret[6] = 'S';
-        res_ret[7] = 'U';
-        res_ret[8] = 'C';
+        res_ret[LEN_SIGNATURE] = 'S';
+        res_ret[LEN_SIGNATURE + 1] = 'U';
+        res_ret[LEN_SIGNATURE + 2] = 'C';
         break;
 
     default:
@@ -159,9 +159,9 @@ int server_respond(
 
 int server_process_payload(request_header hdr, char *pld)
 {
-    char signature[7];
-    strncat(signature, pld, 6);
-    signature[6] = '\0';
+    char signature[LEN_SIGNATURE + 1];
+    strncat(signature, pld, LEN_SIGNATURE);
+    signature[LEN_SIGNATURE] = '\0';
 
     if (strcmp(signature, SIGNATURE_PAYLOAD) != 0)
     {
@@ -174,7 +174,7 @@ int server_process_payload(request_header hdr, char *pld)
     case REQ_MSG:
         for (size_t i = 0; i < hdr.payload_size; i++)
         {
-            printf("%c", pld[i + 6]);
+            printf("%c", pld[i + LEN_SIGNATURE]);
         }
 
         break;
