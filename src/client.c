@@ -104,11 +104,11 @@ int client_receive_response(int sock, struct sockaddr_in expected_addr)
     strncat(signature, resp, 6);
 
     char rettype_s[3] = {resp[6], resp[7], resp[8]};
-    if (strcmp(rettype_s, "ERR") == 0)
+    if (strcmp(rettype_s, RES_ERR_S) == 0)
     {
         return RES_ERR;
     }
-    else if (strcmp(rettype_s, "SUC"))
+    else if (strcmp(rettype_s, RES_SUC_S))
     {
         return RES_SUC;
     }

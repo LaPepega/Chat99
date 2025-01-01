@@ -60,11 +60,11 @@ int server_receive_header(
     // The easiest way to get a string slice here :/
     char req_type[4] = {header[6], header[7], header[8], '\0'};
 
-    if (strcmp(req_type, "ADD") == 0)
+    if (strcmp(req_type, REQ_ADD_S) == 0)
     {
         req_ret->type = REQ_ADD;
     }
-    else if (strcmp(req_type, "MSG") == 0)
+    else if (strcmp(req_type, REQ_MSG_S) == 0)
     {
         req_ret->type = REQ_MSG;
     }

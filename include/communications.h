@@ -42,6 +42,9 @@ typedef enum request_type
     REQ_MSG,
 } request_type;
 
+#define REQ_ADD_S "ADD"
+#define REQ_MSG_S "MSG"
+
 /**
  * @brief Types of requests the server can receive
  */
@@ -52,6 +55,9 @@ typedef enum response_type
     /** Success response */
     RES_SUC,
 } response_type;
+
+#define RES_ERR_S "ERR"
+#define RES_SUC_S "SUC"
 
 /**
  * @brief Chat99 request data. All request bytes
