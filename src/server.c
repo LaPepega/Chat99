@@ -38,10 +38,10 @@ int server_receive_header(
     request_header *req_ret,
     struct sockaddr_in *client_addr_ret)
 {
-    char header[13];
+    char header[LEN_HEADER];
     uint32_t client_addr_size = sizeof(*client_addr_ret);
 
-    if (recvfrom(sock, &header, 13, 0, (struct sockaddr *)client_addr_ret, &client_addr_size) < 0)
+    if (recvfrom(sock, &header, LEN_HEADER, 0, (struct sockaddr *)client_addr_ret, &client_addr_size) < 0)
     {
         // receiving error
         return -1;
