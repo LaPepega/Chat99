@@ -24,6 +24,13 @@ that i already have the payload size when i recvfrom()
 /** Server->Client response*/
 #define SIGNATURE_RESPONSE "C99RES"
 
+/** Predefined length of all server response messages.
+ * 6 byte signature + 3 byte response type */
+#define LEN_RESPONSE 9
+/** Predefined length of all client header request messages.
+ * 6 byte signature + 3 byte request type + 4 byte payload length */
+#define LEN_HEADER 13
+
 /**
  * @brief Types of requests the server can receive
  */

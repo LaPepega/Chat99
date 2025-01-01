@@ -75,10 +75,10 @@ int client_send_header_request(
     request_header hdr)
 {
     uint32_t addr_size = sizeof(server_addr);
-    char header_req[13];
+    char header_req[LEN_HEADER];
     client_build_header_request(hdr, header_req);
 
-    if (sendto(sock, header_req, 13, 0, (struct sockaddr *)&server_addr, addr_size) < 0)
+    if (sendto(sock, header_req, LEN_HEADER, 0, (struct sockaddr *)&server_addr, addr_size) < 0)
     {
         return -1;
     }

@@ -128,8 +128,8 @@ int server_respond(
     response_type res)
 {
     uint32_t addr_size = sizeof(client_addr);
-    char response[9];
+    char response[LEN_RESPONSE];
     server_build_response(res, response);
-    sendto(sock, response, 9, 0, (struct sockaddr *)&client_addr, addr_size);
+    sendto(sock, response, LEN_RESPONSE, 0, (struct sockaddr *)&client_addr, addr_size);
     return 0;
 }
