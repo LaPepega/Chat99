@@ -27,10 +27,10 @@ int client_build_header_request(request_header req_data, char *req_ret);
  *
  * @param sock socket descriptor to send from
  * @param server_addr address of the server
- * @param header_req header request, see `client_build_header_request()`
+ * @param hdr header data to build request from
  * @return int 0 for success -1 for errors
  */
 int client_send_header_request(
     int sock,
     struct sockaddr_in server_addr,
-    char *header_req);
+    request_header hdr);

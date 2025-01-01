@@ -57,8 +57,8 @@ int server_build_response(response_type t, char *res_ret);
  *
  * @param sock socket to respond from
  * @param client_addr address to respond to
- * @param response responses follow a similar standard to
+ * @param res response to send
  * requests, see docs for more info.
  * @return int 0 for success -1
  */
-int server_respond(int sock, struct sockaddr_in client_addr, char *response);
+int server_respond(int sock, struct sockaddr_in client_addr, response_type res);

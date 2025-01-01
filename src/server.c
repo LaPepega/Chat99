@@ -125,9 +125,11 @@ int server_build_response(response_type t, char *res_ret)
 int server_respond(
     int sock,
     struct sockaddr_in client_addr,
-    char *response)
+    response_type res)
 {
     uint32_t addr_size = sizeof(client_addr);
+    char response[9];
+    server_build_response(res, response);
     sendto(sock, response, 9, 0, (struct sockaddr *)&client_addr, addr_size);
     return 0;
 }
