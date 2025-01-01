@@ -43,3 +43,19 @@ int client_send_header_request(
  * @return int `response_code` or -1 for errors
  */
 int client_receive_response(int sock, struct sockaddr_in expected_addr);
+
+/**
+ * @brief Send payload to the server
+ *
+ * @param sock socket descriptor to send from
+ * @param server_addr server addres to send to
+ * @param payload_size length of the payload, must be the
+ * same as in the previously sent header
+ * @param payload payload to send, doesn't have to be zero terminated
+ * @return int 0 for success -1 for errors
+ */
+int client_send_payload(
+    int sock,
+    struct sockaddr_in server_addr,
+    uint32_t payload_size,
+    char *payload);

@@ -62,3 +62,13 @@ int server_build_response(response_code t, char *res_ret);
  * @return int 0 for success -1
  */
 int server_respond(int sock, struct sockaddr_in client_addr, response_code res);
+
+/**
+ * @brief Probably the most important server function, handles the payload
+ * depending on the header data
+ *
+ * @param hdr header to interpret the payload according to
+ * @param pld payload to process
+ * @return int 0 for success -1 for errors
+ */
+int server_process_payload(request_header hdr, char *pld);

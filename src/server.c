@@ -93,7 +93,8 @@ int server_receive_payload(
     struct sockaddr_in received_addr;
     uint32_t addr_size = sizeof(received_addr);
 
-    if (recvfrom(sock, payload_ret, payload_size, 0, (struct sockaddr *)&received_addr, &addr_size) < 0)
+    // +6 bytes for signature
+    if (recvfrom(sock, payload_ret, payload_size + 6, 0, (struct sockaddr *)&received_addr, &addr_size) < 0)
     {
         // receiving error
         return -1;
@@ -153,5 +154,39 @@ int server_respond(
         return -1;
     }
 
+    return 0;
+}
+
+int server_process_payload(request_header hdr, char *pld)
+{
+    char signature[7];
+    strncat(signature, pld, 6);
+    signature[6] = '\0';
+
+    if (strcmp(signature, SIGNATURE_PAYLOAD) != 0)
+    {
+        // Invalid signature
+        return -1;
+    }
+
+    switch (hdr.type)
+    {
+    case REQ_MSG:
+        for (size_t i = 0; i < hdr.payload_size; i++)
+        {
+            printf("%c", pld[i + 6]);
+        }
+
+        break;
+
+    case REQ_ADD:
+        // TODO:
+        break;
+
+    default:
+
+        return -1;
+        break;
+    }
     return 0;
 }

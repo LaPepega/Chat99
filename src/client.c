@@ -125,3 +125,27 @@ int client_receive_response(int sock, struct sockaddr_in expected_addr)
         return -1;
     }
 }
+
+int client_send_payload(
+    int sock,
+    struct sockaddr_in server_addr,
+    uint32_t payload_size,
+    char *payload)
+{
+    uint32_t addr_size = sizeof(server_addr);
+    char signed_payload[payload_size + 6];
+    strncpy(signed_payload, SIGNATURE_PAYLOAD, 6);
+
+    for (size_t i = 0; i < payload_size; i++)
+    {
+        signed_payload[i + 6] = payload[i];
+    }
+
+    if (sendto(sock, signed_payload, payload_size + 6, 0, (struct sockaddr *)&server_addr, addr_size) < 0)
+    {
+        // Sending error
+        return -1;
+    }
+
+    return 0;
+}
