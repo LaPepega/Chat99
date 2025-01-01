@@ -76,7 +76,12 @@ int client_send_header_request(
 {
     uint32_t addr_size = sizeof(server_addr);
     char header_req[LEN_HEADER];
-    client_build_header_request(hdr, header_req);
+
+    if (client_build_header_request(hdr, header_req) < 0)
+    {
+        // Failed to build header request
+        return -1;
+    }
 
     if (sendto(sock, header_req, LEN_HEADER, 0, (struct sockaddr *)&server_addr, addr_size) < 0)
     {
