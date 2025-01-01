@@ -87,3 +87,34 @@ int client_send_header_request(
     }
     return 0;
 }
+
+int client_receive_response(int sock, struct sockaddr_in expected_addr)
+{
+    char resp[LEN_RESPONSE];
+    struct sockaddr_in received_addr;
+    uint32_t addr_size = sizeof(received_addr);
+
+    if (recvfrom(sock, resp, LEN_RESPONSE, 0, (struct sockaddr *)&received_addr, &addr_size) < 0)
+    {
+        // Receive error
+        return -1;
+    }
+
+    char signature[6];
+    strncat(signature, resp, 6);
+
+    char rettype_s[3] = {resp[6], resp[7], resp[8]};
+    if (strcmp(rettype_s, "ERR") == 0)
+    {
+        return RES_ERR;
+    }
+    else if (strcmp(rettype_s, "SUC"))
+    {
+        return RES_SUC;
+    }
+    else
+    {
+        // Invalid response code
+        return -1;
+    }
+}
