@@ -101,6 +101,12 @@ int client_receive_response(int sock, struct sockaddr_in expected_addr)
         return -1;
     }
 
+    if (received_addr.sin_family != expected_addr.sin_family || received_addr.sin_addr.s_addr != expected_addr.sin_addr.s_addr)
+    {
+        // Addresses didn't match
+        return -1;
+    }
+
     char signature[6];
     strncat(signature, resp, 6);
 
