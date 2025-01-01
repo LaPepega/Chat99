@@ -41,7 +41,11 @@ int server_receive_header(
     char header[13];
     uint32_t client_addr_size = sizeof(*client_addr_ret);
 
-    recvfrom(sock, &header, 13, 0, (struct sockaddr *)client_addr_ret, &client_addr_size);
+    if (recvfrom(sock, &header, 13, 0, (struct sockaddr *)client_addr_ret, &client_addr_size) < 0)
+    {
+        // receiving error
+        return -1;
+    }
 
     char signature[7];
     strncpy(signature, header, 6);
@@ -88,11 +92,18 @@ int server_receive_payload(
 {
     struct sockaddr_in received_addr;
     uint32_t addr_size = sizeof(received_addr);
-    recvfrom(sock, payload_ret, payload_size, 0, (struct sockaddr *)&received_addr, &addr_size);
+
+    if (recvfrom(sock, payload_ret, payload_size, 0, (struct sockaddr *)&received_addr, &addr_size) < 0)
+    {
+        // receiving error
+        return -1;
+    }
+
     if (received_addr.sin_family != expected_addr.sin_family || received_addr.sin_addr.s_addr != expected_addr.sin_addr.s_addr)
     {
         return -1;
     }
+
     return 0;
 }
 
@@ -129,7 +140,18 @@ int server_respond(
 {
     uint32_t addr_size = sizeof(client_addr);
     char response[LEN_RESPONSE];
-    server_build_response(res, response);
-    sendto(sock, response, LEN_RESPONSE, 0, (struct sockaddr *)&client_addr, addr_size);
+
+    if (server_build_response(res, response) < 0)
+    {
+        return -1;
+        // failed to build response
+    }
+
+    if (sendto(sock, response, LEN_RESPONSE, 0, (struct sockaddr *)&client_addr, addr_size) < 0)
+    {
+        // sending error
+        return -1;
+    }
+
     return 0;
 }
