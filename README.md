@@ -28,7 +28,7 @@ $ cmake -S . -B build
 $ cmake --build build --config Release --target all
 ```
 
-Then you can find build result in `/path/to/chat99/build/src` (Main Chat99 binary, `libclient.so`, `libserver.so`)
+Then you can find build result in `/path/to/chat99/build/src` (Main Chat99 binary, `libclient.a`, `libserver.a`)
 
 Tested with `clang-18.1.8` and `gcc-14.1.1`
 
@@ -47,29 +47,60 @@ Chat99 Consists of 2 parts:
 
 The client and server code is compiled into shared libraries, which are then used by the main binary. The final binary acts as *both* the client and the server, it's just easier to separate functions of the two in code.
 
-## Requests
+## Communications
 
-Well more like packets but I don't care. All data transferred over UDP is formatted to be as easy to parse as possible so any messages, usernames, etc. can only contain ASCII characters.
+All data transferred over UDP is formatted to be as easy to parse as possible so any messages, usernames, etc. can only contain ASCII characters.
 
-**Any non-ASCII messages are undefined behavior because I said so, fuck you.**
+***There is no encryption whatsoever.*** All the exchanges between clients and servers are raw bytes which can be interpreted as ASCII for human readability.
 
-Anyway, every request contains these parts:
+So every communication happens in this order:
 
-1. Request header which consists of:
-    1. Chat99 signature [6 bytes] : `43 39 39 52 45 51` ( ASCII `C99REQ` )
-    2. [Request type](#request-types) [3 bytes]
-    3. Payload length [4 bytes]
-2. Payload of specified length which is interpreted according to the request's [type](#request-types).
+```plaintext
+client -> header request
+server -> response
+Assuming SUC:
+client -> payload request
+server -> response
+```
 
-### Request types
+### Requests
 
-What is being requested? 3 byte flag which can be thought of as it's ASCII representation, always one of the following:
+First 6 bytes of any request are a signature. Requests can be either headers (signed `C99REQ`) or payloads (signed `C99PLD`)
 
-- ADD (`41 44 44`) - Start a new chat with the user, *add* them to peer list. Have no payload. Any unwanted payload will be ignored.
-- MSG (`4D 53 47`) - Send a message to the user. Payload is the ASCII message for the user.
+All `REQ` requests specify a request type in the next 3 bytes after the signature. Currently implemented request types are:
+
+- `ADD` - For adding the user to active chats
+- `MSG` - For sending a message to a user
+
+Every header request must be followed by a payload request. Next 4 bytes after the request type are a `uint32` payload length. `PLD` Requests carry said payload, which can be anything, these requests are interpreted differently depending on the preceding header request type.
+
+#### Examples:
+
+These are ASCII representations of raw bytes sent through UDP. Some of the bytes can't be adequately represented with ASCII. Here the symbol `\` followed by a number represents the hex equivalent of this number (`\18` would be `11` in hex)
+
+- `C99REQADD\0\0\0\0` followed by `C99PLD` requests to add the receiving user to active chat.
+- `C99REQMSG\0\0\0\11` followed by `C99PLDhello world` sends the message "hello world" to the receiving user.
+
+### Responses
+
+Responses are signed in a similar way to requests - `C99RES`. Response codes are stored the same way as request types and are 3 bytes long too. Currently implemented response codes are:
+
+- `SUC` - Request received and processed successfully, the client may proceed to send the `PLD`.
+- `ERR` - An error occurred while processing the request, the server will not be expecting to receive a `PLD`.
+
+So with this knowledge here's an example of a full, successful interaction between the client and the server:
+
+```plaintext
+client -> C99REQMSG\0\0\0\11
+server -> C99RESSUC
+client -> C99REQPLDhello world
+server -> C99RESSUC
+```
+
+After this exchange user acting as the server will receive a message "hello world".
 
 ## Contributing
 
-Any contributions are highly appreciated, although this is meant to be my personal study on sockets.
+Any contributions are highly appreciated.
 
-When contributing please create your own branch (or a fork) named `dev/{username}` or `feature/{feature name}` (you get the idea) and pull request.
+When contributing please create your own branch (or a fork) named `dev/{username}` or `feature/{feature name}` (you get the idea) and pull request. <3
