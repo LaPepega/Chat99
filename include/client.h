@@ -40,6 +40,6 @@ int client_send_header_request(
  *
  * @param sock socket to listen to
  * @param expected_addr address to expect the response from
- * @return int `response_type` or -1 for errors
+ * @return int `response_code` or -1 for errors
  */
 int client_receive_response(int sock, struct sockaddr_in expected_addr);

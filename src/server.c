@@ -107,7 +107,7 @@ int server_receive_payload(
     return 0;
 }
 
-int server_build_response(response_type t, char *res_ret)
+int server_build_response(response_code t, char *res_ret)
 {
     strcpy(res_ret, SIGNATURE_RESPONSE);
 
@@ -136,7 +136,7 @@ int server_build_response(response_type t, char *res_ret)
 int server_respond(
     int sock,
     struct sockaddr_in client_addr,
-    response_type res)
+    response_code res)
 {
     uint32_t addr_size = sizeof(client_addr);
     char response[LEN_RESPONSE];

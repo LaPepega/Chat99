@@ -50,10 +50,10 @@ int server_receive_payload(
  * must be `9` bytes long
  * @return int 0 for success -1 for errors
  */
-int server_build_response(response_type t, char *res_ret);
+int server_build_response(response_code t, char *res_ret);
 
 /**
- * @brief Respond to client's request with one of `response_type`s
+ * @brief Respond to client's request with one of `response_code`s
  *
  * @param sock socket to respond from
  * @param client_addr address to respond to
@@ -61,4 +61,4 @@ int server_build_response(response_type t, char *res_ret);
  * requests, see docs for more info.
  * @return int 0 for success -1
  */
-int server_respond(int sock, struct sockaddr_in client_addr, response_type res);
+int server_respond(int sock, struct sockaddr_in client_addr, response_code res);

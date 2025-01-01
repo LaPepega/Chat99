@@ -48,13 +48,13 @@ typedef enum request_type
 /**
  * @brief Types of requests the server can receive
  */
-typedef enum response_type
+typedef enum response_code
 {
     /** Error response */
     RES_ERR,
     /** Success response */
     RES_SUC,
-} response_type;
+} response_code;
 
 #define RES_ERR_S "ERR"
 #define RES_SUC_S "SUC"
