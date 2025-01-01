@@ -1,7 +1,7 @@
 include_directories(../include)
 
-add_library(client SHARED client.c)
-add_library(server SHARED server.c)
+add_library(client client.c)
+add_library(server server.c)
 
 add_executable(${PROJECT_NAME} main.c)
 
